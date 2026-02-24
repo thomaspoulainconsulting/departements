@@ -181,6 +181,36 @@
       display: flex;
       gap: 0.75rem;
     }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      top: -10px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .input-correct { border-color: #22c55e !important; }
+    .input-wrong { border-color: #ef4444 !important; }
+    .number-correct { color: #22c55e; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.3s ease; }
   </style>
 </head>
 <body>
@@ -319,6 +349,10 @@
     function showCurrentDept() {
       const [code, name] = gameState.queue[gameState.current];
       document.getElementById('dept-number').textContent = code;
+      const numberEl = document.getElementById('dept-number');
+      numberEl.classList.remove('fade-in');
+      void numberEl.offsetWidth; // force reflow to restart animation
+      numberEl.classList.add('fade-in');
       const input = document.getElementById('answer-input');
       input.value = '';
       input.disabled = false;
@@ -354,23 +388,53 @@
       }
     }
 
+    function spawnConfetti() {
+      const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+      for (let i = 0; i < 25; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animation = `confetti-fall ${1 + Math.random() * 1}s ease-out forwards`;
+        el.style.animationDelay = Math.random() * 0.5 + 's';
+        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2500);
+      }
+    }
+
     function onCorrectAnswer(name) {
-      document.getElementById('answer-input').disabled = true;
-      setTimeout(nextDept, 1500);
+      const input = document.getElementById('answer-input');
+      const number = document.getElementById('dept-number');
+      input.disabled = true;
+      input.classList.add('input-correct');
+      number.classList.add('number-correct');
+      spawnConfetti();
+      setTimeout(() => {
+        input.classList.remove('input-correct');
+        number.classList.remove('number-correct');
+        nextDept();
+      }, 1500);
     }
 
     function onWrongAnswer() {
-      document.getElementById('answer-input').value = '';
+      const input = document.getElementById('answer-input');
+      input.classList.add('shake', 'input-wrong');
+      input.value = '';
       document.getElementById('attempts').textContent = `Tentative ${gameState.attempts + 1}/3`;
+      setTimeout(() => input.classList.remove('shake', 'input-wrong'), 1000);
     }
 
     function onRevealAnswer(name) {
-      document.getElementById('answer-input').disabled = true;
+      const input = document.getElementById('answer-input');
+      input.disabled = true;
+      input.classList.add('input-wrong');
       const reveal = document.getElementById('reveal-text');
       reveal.textContent = name;
       reveal.style.display = 'block';
       setTimeout(() => {
         reveal.style.display = 'none';
+        input.classList.remove('input-wrong');
         nextDept();
       }, 2000);
     }
@@ -411,6 +475,10 @@
       const code = keys[Math.floor(Math.random() * keys.length)];
       const name = DEPARTEMENTS[code];
       document.getElementById('single-number').textContent = code;
+      const singleNumberEl = document.getElementById('single-number');
+      singleNumberEl.classList.remove('fade-in');
+      void singleNumberEl.offsetWidth; // force reflow to restart animation
+      singleNumberEl.classList.add('fade-in');
       const input = document.getElementById('single-input');
       input.value = '';
       input.disabled = false;
@@ -430,6 +498,7 @@
       if (checkAnswer(value, expected)) {
         result.textContent = `Correct ! C'est bien ${expected}`;
         result.className = 'result-text correct';
+        spawnConfetti();
       } else {
         result.textContent = `Raté ! C'était ${expected}`;
         result.className = 'result-text wrong';
