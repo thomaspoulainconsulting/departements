@@ -348,8 +348,8 @@
 
     function showCurrentDept() {
       const [code, name] = gameState.queue[gameState.current];
-      document.getElementById('dept-number').textContent = code;
       const numberEl = document.getElementById('dept-number');
+      numberEl.textContent = code;
       numberEl.classList.remove('fade-in');
       void numberEl.offsetWidth; // force reflow to restart animation
       numberEl.classList.add('fade-in');
@@ -371,6 +371,7 @@
 
     function handleAnswer() {
       const input = document.getElementById('answer-input');
+      if (input.disabled) return;
       const value = input.value.trim();
       if (!value) return;
       const [code, name] = gameState.queue[gameState.current];
@@ -451,12 +452,17 @@
 
     function showResults() {
       showScreen('results');
+      document.getElementById('progress-fill').style.width = '100%';
       document.getElementById('final-score').textContent = `${gameState.score} / ${gameState.queue.length}`;
+      const missedHeading = document.querySelector('#results h2');
       const missedList = document.getElementById('missed-list');
       missedList.innerHTML = '';
       if (gameState.missed.length === 0) {
-        missedList.innerHTML = '<li style="list-style:none">Aucune erreur, bravo !</li>';
+        missedHeading.textContent = 'Aucune erreur, bravo !';
+        missedHeading.style.color = '#22c55e';
       } else {
+        missedHeading.textContent = 'Départements manqués';
+        missedHeading.style.color = '';
         gameState.missed.forEach(({ code, name }) => {
           const li = document.createElement('li');
           li.textContent = `${code} — ${name}`;
@@ -474,8 +480,8 @@
       const keys = Object.keys(DEPARTEMENTS);
       const code = keys[Math.floor(Math.random() * keys.length)];
       const name = DEPARTEMENTS[code];
-      document.getElementById('single-number').textContent = code;
       const singleNumberEl = document.getElementById('single-number');
+      singleNumberEl.textContent = code;
       singleNumberEl.classList.remove('fade-in');
       void singleNumberEl.offsetWidth; // force reflow to restart animation
       singleNumberEl.classList.add('fade-in');
