@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Départements</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* Home screen */
+    #home h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .home-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 1.1rem;
+      font-weight: 500;
+      padding: 1rem 2rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: #fff;
+      color: #1a1a1a;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .btn:hover {
+      border-color: #1a1a1a;
+      background-color: #fafafa;
+    }
+
+    /* Department number display */
+    .dept-number {
+      font-size: 6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 1rem 0;
+    }
+
+    /* Input fields */
+    input[type="text"] {
+      font-family: inherit;
+      font-size: 1.5rem;
+      padding: 0.75rem 1rem;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #1a1a1a;
+    }
+
+    /* Attempts counter */
+    #attempts {
+      font-size: 0.9rem;
+      color: #999;
+    }
+
+    /* Reveal text */
+    #reveal-text {
+      display: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e53e3e;
+    }
+
+    #reveal-text.visible {
+      display: block;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      width: 100%;
+      max-width: 400px;
+      height: 4px;
+      background: #eee;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #1a1a1a;
+      transition: width 0.3s;
+      width: 0%;
+    }
+
+    /* Score text */
+    .score-text {
+      font-size: 0.9rem;
+      color: #999;
+      margin-top: 0.5rem;
+    }
+
+    /* Results screen */
+    #final-score {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    #results h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    #missed-list {
+      list-style: none;
+      width: 100%;
+      max-width: 400px;
+      text-align: left;
+    }
+
+    #missed-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* Single mode result text */
+    .result-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      min-height: 1.5em;
+    }
+
+    .result-text.correct {
+      color: #38a169;
+    }
+
+    .result-text.wrong {
+      color: #e53e3e;
+    }
+
+    /* Single mode buttons */
+    .single-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Home screen -->
+  <section id="home" class="active">
+    <h1>Quiz Départements</h1>
+    <div class="home-buttons">
+      <button id="btn-full" class="btn">Partie complète (101 départements)</button>
+      <button id="btn-single" class="btn">Un département</button>
+    </div>
+  </section>
+
+  <!-- Full game screen -->
+  <section id="game">
+    <div id="dept-number" class="dept-number"></div>
+    <input type="text" id="answer-input" placeholder="Nom du département..." autocomplete="off">
+    <div id="attempts"></div>
+    <div id="reveal-text"></div>
+    <div class="progress-bar">
+      <div id="progress-fill" class="progress-fill"></div>
+    </div>
+    <div id="score-text" class="score-text"></div>
+  </section>
+
+  <!-- Single department screen -->
+  <section id="single">
+    <div id="single-number" class="dept-number"></div>
+    <input type="text" id="single-input" placeholder="Nom du département..." autocomplete="off">
+    <div id="single-result" class="result-text"></div>
+    <div class="single-buttons">
+      <button id="btn-another" class="btn">Encore un</button>
+      <button id="btn-back" class="btn">Retour</button>
+    </div>
+  </section>
+
+  <!-- Results screen -->
+  <section id="results">
+    <div id="final-score"></div>
+    <h2>Départements manqués</h2>
+    <ul id="missed-list"></ul>
+    <button id="btn-restart" class="btn">Recommencer</button>
+  </section>
+
+  <script>
+    const sections = document.querySelectorAll('section');
+
+    function showScreen(id) {
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startFullGame() {}
+    function startSingle() {}
+    function pickRandomSingle() {}
+
+    showScreen('home');
+
+    document.getElementById('btn-full').addEventListener('click', () => startFullGame());
+    document.getElementById('btn-single').addEventListener('click', () => startSingle());
+    document.getElementById('btn-restart').addEventListener('click', () => showScreen('home'));
+    document.getElementById('btn-another').addEventListener('click', () => pickRandomSingle());
+    document.getElementById('btn-back').addEventListener('click', () => showScreen('home'));
+  </script>
+
+</body>
+</html>
