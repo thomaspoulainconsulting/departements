@@ -385,7 +385,21 @@
       }
     }
 
-    function showResults() {}
+    function showResults() {
+      showScreen('results');
+      document.getElementById('final-score').textContent = `${gameState.score} / ${gameState.queue.length}`;
+      const missedList = document.getElementById('missed-list');
+      missedList.innerHTML = '';
+      if (gameState.missed.length === 0) {
+        missedList.innerHTML = '<li style="list-style:none">Aucune erreur, bravo !</li>';
+      } else {
+        gameState.missed.forEach(({ code, name }) => {
+          const li = document.createElement('li');
+          li.textContent = `${code} — ${name}`;
+          missedList.appendChild(li);
+        });
+      }
+    }
 
     function startSingle() {}
     function pickRandomSingle() {}
