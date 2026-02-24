@@ -298,7 +298,95 @@
       document.getElementById(id).classList.add('active');
     }
 
-    function startFullGame() {}
+    let gameState = {
+      queue: [],
+      current: 0,
+      attempts: 0,
+      score: 0,
+      missed: []
+    };
+
+    function startFullGame() {
+      gameState.queue = shuffle(Object.entries(DEPARTEMENTS));
+      gameState.current = 0;
+      gameState.attempts = 0;
+      gameState.score = 0;
+      gameState.missed = [];
+      showScreen('game');
+      showCurrentDept();
+    }
+
+    function showCurrentDept() {
+      const [code, name] = gameState.queue[gameState.current];
+      document.getElementById('dept-number').textContent = code;
+      const input = document.getElementById('answer-input');
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+      document.getElementById('attempts').textContent = `Tentative ${gameState.attempts + 1}/3`;
+      document.getElementById('reveal-text').style.display = 'none';
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = gameState.queue.length;
+      const current = gameState.current;
+      document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+      document.getElementById('score-text').textContent = `${current} / ${total}`;
+    }
+
+    function handleAnswer() {
+      const input = document.getElementById('answer-input');
+      const value = input.value.trim();
+      if (!value) return;
+      const [code, name] = gameState.queue[gameState.current];
+      if (checkAnswer(value, name)) {
+        gameState.score++;
+        onCorrectAnswer(name);
+      } else {
+        gameState.attempts++;
+        if (gameState.attempts >= 3) {
+          gameState.missed.push({ code, name });
+          onRevealAnswer(name);
+        } else {
+          onWrongAnswer();
+        }
+      }
+    }
+
+    function onCorrectAnswer(name) {
+      document.getElementById('answer-input').disabled = true;
+      setTimeout(nextDept, 1500);
+    }
+
+    function onWrongAnswer() {
+      document.getElementById('answer-input').value = '';
+      document.getElementById('attempts').textContent = `Tentative ${gameState.attempts + 1}/3`;
+    }
+
+    function onRevealAnswer(name) {
+      document.getElementById('answer-input').disabled = true;
+      const reveal = document.getElementById('reveal-text');
+      reveal.textContent = name;
+      reveal.style.display = 'block';
+      setTimeout(() => {
+        reveal.style.display = 'none';
+        nextDept();
+      }, 2000);
+    }
+
+    function nextDept() {
+      gameState.current++;
+      gameState.attempts = 0;
+      if (gameState.current >= gameState.queue.length) {
+        showResults();
+      } else {
+        showCurrentDept();
+      }
+    }
+
+    function showResults() {}
+
     function startSingle() {}
     function pickRandomSingle() {}
 
@@ -309,6 +397,10 @@
     document.getElementById('btn-restart').addEventListener('click', () => showScreen('home'));
     document.getElementById('btn-another').addEventListener('click', () => pickRandomSingle());
     document.getElementById('btn-back').addEventListener('click', () => showScreen('home'));
+
+    document.getElementById('answer-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleAnswer();
+    });
   </script>
 
 </body>
