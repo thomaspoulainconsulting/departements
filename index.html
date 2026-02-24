@@ -401,8 +401,41 @@
       }
     }
 
-    function startSingle() {}
-    function pickRandomSingle() {}
+    function startSingle() {
+      showScreen('single');
+      pickRandomSingle();
+    }
+
+    function pickRandomSingle() {
+      const keys = Object.keys(DEPARTEMENTS);
+      const code = keys[Math.floor(Math.random() * keys.length)];
+      const name = DEPARTEMENTS[code];
+      document.getElementById('single-number').textContent = code;
+      const input = document.getElementById('single-input');
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+      input.dataset.answer = name;
+      document.getElementById('single-result').textContent = '';
+      document.getElementById('single-result').className = 'result-text';
+    }
+
+    function handleSingleAnswer() {
+      const input = document.getElementById('single-input');
+      if (input.disabled) return;
+      const value = input.value.trim();
+      if (!value) return;
+      const expected = input.dataset.answer;
+      const result = document.getElementById('single-result');
+      if (checkAnswer(value, expected)) {
+        result.textContent = `Correct ! C'est bien ${expected}`;
+        result.className = 'result-text correct';
+      } else {
+        result.textContent = `Raté ! C'était ${expected}`;
+        result.className = 'result-text wrong';
+      }
+      input.disabled = true;
+    }
 
     showScreen('home');
 
@@ -414,6 +447,10 @@
 
     document.getElementById('answer-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleAnswer();
+    });
+
+    document.getElementById('single-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSingleAnswer();
     });
   </script>
 
