@@ -2,9 +2,7 @@
 
 Jeu de quiz pour deviner les 101 départements français à partir de leur numéro.
 
-## Jouer
-
-Ouvrir `index.html` dans un navigateur. Aucune installation requise.
+👉 **[Jouer en ligne](https://jeudesdepartements.netlify.app/)**
 
 ## Modes de jeu
 
