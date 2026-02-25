@@ -635,6 +635,80 @@
     #found-list::-webkit-scrollbar { width: 3px; }
     #found-list::-webkit-scrollbar-track { background: transparent; }
     #found-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ─── Streak ─── */
+
+    .streak-display {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.3s ease, color 0.3s ease, transform 0.3s ease;
+      min-height: 1.5em;
+    }
+
+    .streak-display.visible {
+      opacity: 1;
+    }
+
+    .streak-display.streak-hot {
+      color: var(--accent);
+      animation: pulse 0.6s ease;
+    }
+
+    .streak-display.streak-fire {
+      color: #C4A14A;
+      animation: pulse 0.6s ease;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .streak-result {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-top: 0.25rem;
+    }
+
+    /* ─── Prefecture question ─── */
+
+    .prefecture-question {
+      font-size: 2.8rem !important;
+      line-height: 1.2;
+    }
+
+    /* ─── Quick buttons ─── */
+
+    .btn-quick-group {
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .btn-quick-label {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-quick-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .btn-quick {
+      font-size: 1rem;
+      padding: 0.65rem 1.25rem;
+    }
   </style>
 </head>
 <body>
@@ -648,13 +722,20 @@
     </div>
     <div class="home-buttons">
       <button id="btn-full" class="btn">
-        Partie complète
+        Départements
         <span class="btn-sub">Les 101 départements</span>
       </button>
-      <button id="btn-single" class="btn">
-        Un département
-        <span class="btn-sub">Question rapide</span>
+      <button id="btn-prefectures" class="btn">
+        Préfectures
+        <span class="btn-sub">Les 101 préfectures</span>
       </button>
+      <div class="btn-quick-group">
+        <div class="btn-quick-label">Question rapide</div>
+        <div class="btn-quick-buttons">
+          <button id="btn-single-dept" class="btn btn-quick">Département</button>
+          <button id="btn-single-pref" class="btn btn-quick">Préfecture</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -663,11 +744,12 @@
     <div class="game-layout">
       <div class="game-main">
         <div class="dept-number-wrap">
-          <div class="dept-prefix">Département n°</div>
+          <div id="dept-prefix" class="dept-prefix">Département n°</div>
           <div id="dept-number" class="dept-number"></div>
         </div>
         <input type="text" id="answer-input" placeholder="Votre réponse..." autocomplete="off">
         <div id="attempts"></div>
+        <div id="streak-display" class="streak-display"></div>
         <div id="reveal-text"></div>
         <div class="progress-bar">
           <div id="progress-fill" class="progress-fill"></div>
@@ -795,7 +877,7 @@
   <!-- Single department screen -->
   <section id="single">
     <div class="dept-number-wrap">
-      <div class="dept-prefix">Département n°</div>
+      <div id="single-prefix" class="dept-prefix">Département n°</div>
       <div id="single-number" class="dept-number"></div>
     </div>
     <input type="text" id="single-input" placeholder="Votre réponse..." autocomplete="off">
@@ -810,6 +892,7 @@
   <section id="results">
     <div class="results-label">Votre score</div>
     <div id="final-score"></div>
+    <div id="streak-result" class="streak-result" style="display:none;"></div>
     <span class="results-ornament"></span>
     <h2>Départements manqués</h2>
     <ul id="missed-list"></ul>
@@ -881,6 +964,36 @@
       "974": "La Réunion", "976": "Mayotte"
     };
 
+    const PREFECTURES = {
+      "01": "Bourg-en-Bresse", "02": "Laon", "03": "Moulins", "04": "Digne-les-Bains",
+      "05": "Gap", "06": "Nice", "07": "Privas", "08": "Charleville-Mézières",
+      "09": "Foix", "10": "Troyes", "11": "Carcassonne", "12": "Rodez",
+      "13": "Marseille", "14": "Caen", "15": "Aurillac", "16": "Angoulême",
+      "17": "La Rochelle", "18": "Bourges", "19": "Tulle",
+      "2A": "Ajaccio", "2B": "Bastia",
+      "21": "Dijon", "22": "Saint-Brieuc", "23": "Guéret", "24": "Périgueux",
+      "25": "Besançon", "26": "Valence", "27": "Évreux", "28": "Chartres",
+      "29": "Quimper", "30": "Nîmes", "31": "Toulouse", "32": "Auch",
+      "33": "Bordeaux", "34": "Montpellier", "35": "Rennes", "36": "Châteauroux",
+      "37": "Tours", "38": "Grenoble", "39": "Lons-le-Saunier", "40": "Mont-de-Marsan",
+      "41": "Blois", "42": "Saint-Étienne", "43": "Le Puy-en-Velay", "44": "Nantes",
+      "45": "Orléans", "46": "Cahors", "47": "Agen", "48": "Mende",
+      "49": "Angers", "50": "Saint-Lô", "51": "Châlons-en-Champagne", "52": "Chaumont",
+      "53": "Laval", "54": "Nancy", "55": "Bar-le-Duc", "56": "Vannes",
+      "57": "Metz", "58": "Nevers", "59": "Lille", "60": "Beauvais",
+      "61": "Alençon", "62": "Arras", "63": "Clermont-Ferrand", "64": "Pau",
+      "65": "Tarbes", "66": "Perpignan", "67": "Strasbourg", "68": "Colmar",
+      "69": "Lyon", "70": "Vesoul", "71": "Mâcon", "72": "Le Mans",
+      "73": "Chambéry", "74": "Annecy", "75": "Paris", "76": "Rouen",
+      "77": "Melun", "78": "Versailles", "79": "Niort", "80": "Amiens",
+      "81": "Albi", "82": "Montauban", "83": "Toulon", "84": "Avignon",
+      "85": "La Roche-sur-Yon", "86": "Poitiers", "87": "Limoges", "88": "Épinal",
+      "89": "Auxerre", "90": "Belfort", "91": "Évry-Courcouronnes",
+      "92": "Nanterre", "93": "Bobigny", "94": "Créteil", "95": "Cergy",
+      "971": "Basse-Terre", "972": "Fort-de-France", "973": "Cayenne",
+      "974": "Saint-Denis", "976": "Mamoudzou"
+    };
+
     // ─── Settings ───
     const SETTINGS_KEY = 'quiz-dept-settings';
     function loadSettings() {
@@ -938,14 +1051,6 @@
       document.getElementById(id).classList.add('active');
     }
 
-    let gameState = {
-      queue: [],
-      current: 0,
-      attempts: 0,
-      score: 0,
-      missed: []
-    };
-
     let foundDepartments = [];
 
     function addToFoundList(code, name) {
@@ -968,9 +1073,11 @@
     }
 
     function markDepartmentFound(code) {
+      const domBadge = document.querySelector('.dom-badge#dept-' + code);
       if (settings.mapEnabled) {
         const path = document.getElementById('dept-' + code);
         if (path) path.classList.add('found');
+        if (domBadge) domBadge.classList.add('found');
       }
       if (settings.foundListEnabled) {
         addToFoundList(code, DEPARTEMENTS[code]);
@@ -989,42 +1096,144 @@
       gameSection.classList.toggle('game-expanded', sidebarVisible);
     }
 
-    function startFullGame() {
-      gameState.queue = shuffle(Object.entries(DEPARTEMENTS));
-      gameState.current = 0;
-      gameState.attempts = 0;
-      gameState.score = 0;
-      gameState.missed = [];
+    // ─── Quiz Engine ───
+
+    let engine = null;
+    let currentMode = 'departements'; // 'departements' or 'prefectures'
+
+    function createQuizEngine(config) {
+      const { entries, maxAttempts, onCorrect, onWrong, onReveal, onComplete, onStreakUpdate } = config;
+      const queue = shuffle([...entries]);
+      const state = {
+        queue,
+        current: 0,
+        attempts: 0,
+        score: 0,
+        missed: [],
+        streak: 0,
+        bestStreak: 0
+      };
+
+      function currentEntry() {
+        return state.queue[state.current];
+      }
+
+      function submitAnswer(input) {
+        const entry = currentEntry();
+        if (checkAnswer(input, entry.answer)) {
+          state.score++;
+          state.streak++;
+          if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+          if (onStreakUpdate) onStreakUpdate(state.streak, state.bestStreak);
+          onCorrect(entry, state.streak);
+        } else {
+          state.attempts++;
+          if (state.attempts >= maxAttempts) {
+            state.streak = 0;
+            if (onStreakUpdate) onStreakUpdate(0, state.bestStreak);
+            state.missed.push(entry);
+            onReveal(entry);
+          } else {
+            state.streak = 0;
+            if (onStreakUpdate) onStreakUpdate(0, state.bestStreak);
+            onWrong(entry, state.attempts);
+          }
+        }
+      }
+
+      function advance() {
+        state.current++;
+        state.attempts = 0;
+        if (state.current >= state.queue.length) {
+          onComplete(state.score, state.queue.length, state.missed, state.bestStreak);
+          return false;
+        }
+        return true;
+      }
+
+      function progress() {
+        return { current: state.current, total: state.queue.length };
+      }
+
+      return { currentEntry, submitAnswer, advance, progress, state };
+    }
+
+    function buildDepartementEntries() {
+      return Object.entries(DEPARTEMENTS).map(([code, name]) => ({
+        code, question: code, answer: name, display: name
+      }));
+    }
+
+    function buildPrefectureEntries() {
+      return Object.keys(DEPARTEMENTS).map(code => ({
+        code, question: DEPARTEMENTS[code], answer: PREFECTURES[code], display: PREFECTURES[code]
+      }));
+    }
+
+    function startGame(mode) {
+      currentMode = mode;
+      const entries = mode === 'prefectures' ? buildPrefectureEntries() : buildDepartementEntries();
+
       foundDepartments = [];
       document.querySelectorAll('.france-map path.found').forEach(p => p.classList.remove('found'));
       document.querySelectorAll('.dom-badge.found').forEach(b => b.classList.remove('found'));
       renderFoundList();
       updateGameSidebar();
+      hideStreak();
+
+      engine = createQuizEngine({
+        entries,
+        maxAttempts: 3,
+        onCorrect(entry, streak) {
+          markDepartmentFound(entry.code);
+          uiOnCorrect(entry, streak);
+        },
+        onWrong(entry, attempt) {
+          uiOnWrong(attempt);
+        },
+        onReveal(entry) {
+          uiOnReveal(entry);
+        },
+        onComplete(score, total, missed, bestStreak) {
+          uiShowResults(score, total, missed, bestStreak);
+        },
+        onStreakUpdate(streak, bestStreak) {
+          updateStreakDisplay(streak);
+        }
+      });
+
       showScreen('game');
-      showCurrentDept();
+      showCurrentQuestion();
     }
 
-    function showCurrentDept() {
-      const [code, name] = gameState.queue[gameState.current];
+    function showCurrentQuestion() {
+      const entry = engine.currentEntry();
+      const prefix = document.getElementById('dept-prefix');
       const numberEl = document.getElementById('dept-number');
-      numberEl.textContent = code;
+
+      if (currentMode === 'prefectures') {
+        prefix.textContent = 'Quelle est la préfecture de';
+        numberEl.textContent = entry.question;
+        numberEl.classList.add('prefecture-question');
+        numberEl.classList.remove('dept-question');
+      } else {
+        prefix.textContent = 'Département n°';
+        numberEl.textContent = entry.question;
+        numberEl.classList.add('dept-question');
+        numberEl.classList.remove('prefecture-question');
+      }
+
       numberEl.classList.remove('fade-in');
       void numberEl.offsetWidth;
       numberEl.classList.add('fade-in');
+
       const input = document.getElementById('answer-input');
       input.value = '';
       input.disabled = false;
       input.focus();
-      document.getElementById('attempts').textContent = `Tentative ${gameState.attempts + 1}/3`;
+      document.getElementById('attempts').textContent = 'Tentative 1/3';
       document.getElementById('reveal-text').style.display = 'none';
-      updateProgress();
-    }
-
-    function updateProgress() {
-      const total = gameState.queue.length;
-      const current = gameState.current;
-      document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
-      document.getElementById('score-text').textContent = `${current} / ${total}`;
+      uiUpdateProgress();
     }
 
     function handleAnswer() {
@@ -1032,25 +1241,92 @@
       if (input.disabled) return;
       const value = input.value.trim();
       if (!value) return;
-      const [code, name] = gameState.queue[gameState.current];
-      if (checkAnswer(value, name)) {
-        gameState.score++;
-        markDepartmentFound(code);
-        onCorrectAnswer(name);
+      engine.submitAnswer(value);
+    }
+
+    function uiUpdateProgress() {
+      const { current, total } = engine.progress();
+      document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+    }
+
+    function uiOnCorrect(entry, streak) {
+      const input = document.getElementById('answer-input');
+      const number = document.getElementById('dept-number');
+      input.disabled = true;
+      input.classList.add('input-correct');
+      number.classList.add('number-correct');
+      spawnConfetti(streak);
+      setTimeout(() => {
+        input.classList.remove('input-correct');
+        number.classList.remove('number-correct');
+        if (engine.advance()) showCurrentQuestion();
+      }, 1500);
+    }
+
+    function uiOnWrong(attempt) {
+      const input = document.getElementById('answer-input');
+      input.classList.add('shake', 'input-wrong');
+      input.value = '';
+      document.getElementById('attempts').textContent = `Tentative ${attempt + 1}/3`;
+      setTimeout(() => input.classList.remove('shake', 'input-wrong'), 1000);
+    }
+
+    function uiOnReveal(entry) {
+      const input = document.getElementById('answer-input');
+      input.disabled = true;
+      input.classList.add('input-wrong');
+      const reveal = document.getElementById('reveal-text');
+      reveal.textContent = entry.display;
+      reveal.style.display = 'block';
+      setTimeout(() => {
+        reveal.style.display = 'none';
+        input.classList.remove('input-wrong');
+        if (engine.advance()) showCurrentQuestion();
+      }, 2000);
+    }
+
+    function uiShowResults(score, total, missed, bestStreak) {
+      showScreen('results');
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('final-score').textContent = `${score}\u2009/\u2009${total}`;
+
+      const streakResult = document.getElementById('streak-result');
+      if (bestStreak >= 3) {
+        streakResult.textContent = `Meilleure série\u00a0: ${bestStreak} 🔥`;
+        streakResult.style.display = 'block';
       } else {
-        gameState.attempts++;
-        if (gameState.attempts >= 3) {
-          gameState.missed.push({ code, name });
-          onRevealAnswer(name);
-        } else {
-          onWrongAnswer();
-        }
+        streakResult.style.display = 'none';
+      }
+
+      const missedHeading = document.querySelector('#results h2');
+      const missedList = document.getElementById('missed-list');
+      missedList.innerHTML = '';
+      if (missed.length === 0) {
+        missedHeading.textContent = 'Aucune erreur, bravo\u00a0!';
+        missedHeading.style.color = 'var(--success)';
+      } else {
+        missedHeading.textContent = currentMode === 'prefectures' ? 'Préfectures manquées' : 'Départements manqués';
+        missedHeading.style.color = '';
+        missed.forEach((entry) => {
+          const li = document.createElement('li');
+          if (currentMode === 'prefectures') {
+            li.innerHTML = `<span>${entry.code}</span>${entry.question} → ${entry.answer}`;
+          } else {
+            li.innerHTML = `<span>${entry.code}</span>${entry.answer}`;
+          }
+          missedList.appendChild(li);
+        });
       }
     }
 
-    function spawnConfetti() {
-      const colors = ['#5B8C6A', '#4A6670', '#C4564A', '#D4A853', '#7B6B8A', '#6A8A96'];
-      for (let i = 0; i < 20; i++) {
+    // ─── Confetti ───
+
+    function spawnConfetti(streak) {
+      const count = streak >= 10 ? 40 : streak >= 5 ? 30 : 20;
+      const colors = streak >= 10
+        ? ['#C4A14A', '#D4B85A', '#E5C96B', '#B89A3A', '#A88A2A', '#F0DA7C']
+        : ['#5B8C6A', '#4A6670', '#C4564A', '#D4A853', '#7B6B8A', '#6A8A96'];
+      for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.className = 'confetti';
         el.style.left = Math.random() * 100 + 'vw';
@@ -1063,94 +1339,68 @@
       }
     }
 
-    function onCorrectAnswer(name) {
-      const input = document.getElementById('answer-input');
-      const number = document.getElementById('dept-number');
-      input.disabled = true;
-      input.classList.add('input-correct');
-      number.classList.add('number-correct');
-      spawnConfetti();
-      setTimeout(() => {
-        input.classList.remove('input-correct');
-        number.classList.remove('number-correct');
-        nextDept();
-      }, 1500);
-    }
+    // ─── Streak display ───
 
-    function onWrongAnswer() {
-      const input = document.getElementById('answer-input');
-      input.classList.add('shake', 'input-wrong');
-      input.value = '';
-      document.getElementById('attempts').textContent = `Tentative ${gameState.attempts + 1}/3`;
-      setTimeout(() => input.classList.remove('shake', 'input-wrong'), 1000);
-    }
-
-    function onRevealAnswer(name) {
-      const input = document.getElementById('answer-input');
-      input.disabled = true;
-      input.classList.add('input-wrong');
-      const reveal = document.getElementById('reveal-text');
-      reveal.textContent = name;
-      reveal.style.display = 'block';
-      setTimeout(() => {
-        reveal.style.display = 'none';
-        input.classList.remove('input-wrong');
-        nextDept();
-      }, 2000);
-    }
-
-    function nextDept() {
-      gameState.current++;
-      gameState.attempts = 0;
-      if (gameState.current >= gameState.queue.length) {
-        showResults();
-      } else {
-        showCurrentDept();
+    function updateStreakDisplay(streak) {
+      const el = document.getElementById('streak-display');
+      if (streak < 3) {
+        el.classList.remove('visible', 'streak-hot', 'streak-fire');
+        return;
       }
-    }
-
-    function showResults() {
-      showScreen('results');
-      document.getElementById('progress-fill').style.width = '100%';
-      document.getElementById('final-score').textContent = `${gameState.score}\u2009/\u2009${gameState.queue.length}`;
-      const missedHeading = document.querySelector('#results h2');
-      const missedList = document.getElementById('missed-list');
-      missedList.innerHTML = '';
-      if (gameState.missed.length === 0) {
-        missedHeading.textContent = 'Aucune erreur, bravo\u00a0!';
-        missedHeading.style.color = 'var(--success)';
-      } else {
-        missedHeading.textContent = 'Départements manqués';
-        missedHeading.style.color = '';
-        gameState.missed.forEach(({ code, name }) => {
-          const li = document.createElement('li');
-          li.innerHTML = `<span>${code}</span>${name}`;
-          missedList.appendChild(li);
-        });
+      el.textContent = (streak >= 5 ? '🔥 ' : '') + 'Série de ' + streak;
+      el.classList.add('visible');
+      el.classList.remove('streak-hot', 'streak-fire');
+      if (streak >= 10) {
+        el.classList.add('streak-fire');
+      } else if (streak >= 5) {
+        el.classList.add('streak-hot');
       }
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
     }
 
-    function startSingle() {
-      showScreen('single');
-      pickRandomSingle();
+    function hideStreak() {
+      const el = document.getElementById('streak-display');
+      el.classList.remove('visible', 'streak-hot', 'streak-fire');
+      el.textContent = '';
     }
 
-    function pickRandomSingle() {
-      const keys = Object.keys(DEPARTEMENTS);
-      const code = keys[Math.floor(Math.random() * keys.length)];
-      const name = DEPARTEMENTS[code];
-      const singleNumberEl = document.getElementById('single-number');
-      singleNumberEl.textContent = code;
-      singleNumberEl.classList.remove('fade-in');
-      void singleNumberEl.offsetWidth;
-      singleNumberEl.classList.add('fade-in');
+    // ─── Single question mode ───
+
+    function startSingleQuestion(mode) {
+      currentMode = mode;
+      const allEntries = mode === 'prefectures' ? buildPrefectureEntries() : buildDepartementEntries();
+      const entry = allEntries[Math.floor(Math.random() * allEntries.length)];
+
+      const prefix = document.getElementById('single-prefix');
+      const numberEl = document.getElementById('single-number');
+
+      if (mode === 'prefectures') {
+        prefix.textContent = 'Quelle est la préfecture de';
+        numberEl.textContent = entry.question;
+        numberEl.classList.add('prefecture-question');
+        numberEl.classList.remove('dept-question');
+      } else {
+        prefix.textContent = 'Département n°';
+        numberEl.textContent = entry.question;
+        numberEl.classList.add('dept-question');
+        numberEl.classList.remove('prefecture-question');
+      }
+
+      numberEl.classList.remove('fade-in');
+      void numberEl.offsetWidth;
+      numberEl.classList.add('fade-in');
+
       const input = document.getElementById('single-input');
       input.value = '';
       input.disabled = false;
       input.focus();
-      input.dataset.answer = name;
+      input.dataset.answer = entry.answer;
+      input.dataset.display = entry.display;
       document.getElementById('single-result').textContent = '';
       document.getElementById('single-result').className = 'result-text';
+      showScreen('single');
     }
 
     function handleSingleAnswer() {
@@ -1159,13 +1409,14 @@
       const value = input.value.trim();
       if (!value) return;
       const expected = input.dataset.answer;
+      const display = input.dataset.display;
       const result = document.getElementById('single-result');
       if (checkAnswer(value, expected)) {
-        result.textContent = `Correct\u00a0! C'est bien ${expected}`;
+        result.textContent = `Correct\u00a0! C'est bien ${display}`;
         result.className = 'result-text correct';
-        spawnConfetti();
+        spawnConfetti(1);
       } else {
-        result.textContent = `Raté\u00a0! C'était ${expected}`;
+        result.textContent = `Raté\u00a0! C'était ${display}`;
         result.className = 'result-text wrong';
       }
       input.disabled = true;
@@ -1173,10 +1424,12 @@
 
     showScreen('home');
 
-    document.getElementById('btn-full').addEventListener('click', () => startFullGame());
-    document.getElementById('btn-single').addEventListener('click', () => startSingle());
+    document.getElementById('btn-full').addEventListener('click', () => startGame('departements'));
+    document.getElementById('btn-prefectures').addEventListener('click', () => startGame('prefectures'));
+    document.getElementById('btn-single-dept').addEventListener('click', () => startSingleQuestion('departements'));
+    document.getElementById('btn-single-pref').addEventListener('click', () => startSingleQuestion('prefectures'));
     document.getElementById('btn-restart').addEventListener('click', () => showScreen('home'));
-    document.getElementById('btn-another').addEventListener('click', () => pickRandomSingle());
+    document.getElementById('btn-another').addEventListener('click', () => startSingleQuestion(currentMode));
     document.getElementById('btn-back').addEventListener('click', () => showScreen('home'));
     document.getElementById('btn-quit').addEventListener('click', () => showScreen('home'));
 
