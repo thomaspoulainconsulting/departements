@@ -337,6 +337,26 @@
       padding: 0.75rem 1.5rem;
     }
 
+    /* ─── Quit button ─── */
+
+    .btn-quit {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 0;
+      margin-top: 0.5rem;
+      transition: color 0.2s ease;
+    }
+
+    .btn-quit:hover {
+      color: var(--text-muted);
+    }
+
     /* ─── Animations ─── */
 
     @keyframes shake {
@@ -440,6 +460,7 @@
       <div id="progress-fill" class="progress-fill"></div>
     </div>
     <div id="score-text" class="score-text"></div>
+    <button id="btn-quit" class="btn-quit">Abandonner</button>
   </section>
 
   <!-- Single department screen -->
@@ -730,6 +751,7 @@
     document.getElementById('btn-restart').addEventListener('click', () => showScreen('home'));
     document.getElementById('btn-another').addEventListener('click', () => pickRandomSingle());
     document.getElementById('btn-back').addEventListener('click', () => showScreen('home'));
+    document.getElementById('btn-quit').addEventListener('click', () => showScreen('home'));
 
     document.getElementById('answer-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleAnswer();
