@@ -4,6 +4,16 @@ Jeu de quiz pour deviner les 101 départements français à partir de leur numé
 
 👉 **[Jouer en ligne](https://jeudesdepartements.netlify.app/)**
 
+## Aperçu
+
+| Accueil | Partie en cours |
+|:---:|:---:|
+| ![Accueil](screenshots/home.png) | ![Jeu](screenshots/game.png) |
+
+| Réglages | Résultats |
+|:---:|:---:|
+| ![Réglages](screenshots/settings.png) | ![Résultats](screenshots/results.png) |
+
 ## Modes de jeu
 
 **Partie complète** — Les 101 départements (métropole + DOM) dans un ordre aléatoire. 3 tentatives par département. Score final avec la liste des départements ratés.
