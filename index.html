@@ -1073,15 +1073,11 @@
     }
 
     function markDepartmentFound(code) {
+      const path = document.getElementById('dept-' + code);
+      if (path) path.classList.add('found');
       const domBadge = document.querySelector('.dom-badge#dept-' + code);
-      if (settings.mapEnabled) {
-        const path = document.getElementById('dept-' + code);
-        if (path) path.classList.add('found');
-        if (domBadge) domBadge.classList.add('found');
-      }
-      if (settings.foundListEnabled) {
-        addToFoundList(code, DEPARTEMENTS[code]);
-      }
+      if (domBadge) domBadge.classList.add('found');
+      addToFoundList(code, DEPARTEMENTS[code]);
     }
 
     function updateGameSidebar() {
