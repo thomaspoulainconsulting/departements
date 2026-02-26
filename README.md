@@ -33,6 +33,7 @@ Jeu de quiz pour tester vos connaissances sur les départements et préfectures 
 - **Liste des départements trouvés** : liste triée alphabétiquement des départements devinés avec compteur de progression. Activable dans les réglages.
 - **Réglages** : accessible via l'icône engrenage en haut à droite. Permet d'activer/désactiver la carte et la liste. Les préférences sont sauvegardées dans le navigateur (localStorage).
 - **Abandonner** : possibilité de quitter une partie en cours pour revenir à l'accueil.
+- **Navigation mobile** : le bouton retour du navigateur ramène à l'écran précédent grâce à l'intégration de l'API History. Le clavier mobile affiche une touche de validation (coche) au lieu du retour à la ligne.
 
 ## Données
 

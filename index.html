@@ -747,7 +747,7 @@
           <div id="dept-prefix" class="dept-prefix">Département n°</div>
           <div id="dept-number" class="dept-number"></div>
         </div>
-        <input type="text" id="answer-input" placeholder="Votre réponse..." autocomplete="off">
+        <input type="text" id="answer-input" placeholder="Votre réponse..." autocomplete="off" enterkeyhint="done">
         <div id="attempts"></div>
         <div id="streak-display" class="streak-display"></div>
         <div id="reveal-text"></div>
@@ -880,7 +880,7 @@
       <div id="single-prefix" class="dept-prefix">Département n°</div>
       <div id="single-number" class="dept-number"></div>
     </div>
-    <input type="text" id="single-input" placeholder="Votre réponse..." autocomplete="off">
+    <input type="text" id="single-input" placeholder="Votre réponse..." autocomplete="off" enterkeyhint="done">
     <div id="single-result" class="result-text"></div>
     <div class="single-buttons">
       <button id="btn-another" class="btn">Encore un</button>
@@ -1042,14 +1042,22 @@
     const sections = document.querySelectorAll('section');
 
     let previousScreen = 'home';
-    function showScreen(id) {
+    function showScreen(id, { pushState = true } = {}) {
       if (id === 'settings') {
         const current = document.querySelector('section.active');
         if (current && current.id !== 'settings') previousScreen = current.id;
       }
       sections.forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+      if (pushState) {
+        history.pushState({ screen: id }, '');
+      }
     }
+
+    window.addEventListener('popstate', (e) => {
+      const screen = e.state && e.state.screen ? e.state.screen : 'home';
+      showScreen(screen, { pushState: false });
+    });
 
     let foundDepartments = [];
 
@@ -1418,7 +1426,8 @@
       input.disabled = true;
     }
 
-    showScreen('home');
+    history.replaceState({ screen: 'home' }, '');
+    showScreen('home', { pushState: false });
 
     document.getElementById('btn-full').addEventListener('click', () => startGame('departements'));
     document.getElementById('btn-prefectures').addEventListener('click', () => startGame('prefectures'));
