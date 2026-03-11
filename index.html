@@ -21,7 +21,7 @@
   <meta name="twitter:description" content="Testez vos connaissances en géographie française : devinez le nom des 101 départements à partir de leur numéro.">
 
   <!-- Misc SEO -->
-  <meta name="theme-color" content="#FAF8F5">
+  <meta name="theme-color" content="#EFE9E2">
   <meta name="robots" content="index, follow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,18 +29,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #FAF8F5;
-      --bg-subtle: #F3EFEB;
-      --text: #2D2A26;
-      --text-muted: #9B928A;
-      --text-light: #C4BBB0;
-      --accent: #4A6670;
-      --accent-light: #6A8A96;
-      --border: #E4DDD6;
+      --bg: #EFE9E2;
+      --bg-subtle: #DED6CC;
+      --text: #2A2725;
+      --text-muted: #8E857C;
+      --text-light: #B5AB9F;
+      --accent: #5A6B66;
+      --accent-light: #7A9590;
+      --border: #D9D1C8;
       --success: #5B8C6A;
-      --success-light: #E8F2EB;
+      --success-light: #E0EDDF;
       --error: #C4564A;
-      --error-light: #F8ECEA;
+      --error-light: #F2E3E0;
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'Outfit', system-ui, sans-serif;
     }
@@ -378,9 +378,9 @@
       font-size: 0.85rem;
       font-weight: 400;
       letter-spacing: 0.05em;
-      color: var(--accent);
+      color: #A68A5B;
       background: none;
-      border: 1px solid var(--accent);
+      border: 1px solid #A68A5B;
       border-radius: 4px;
       cursor: pointer;
       padding: 0.4rem 1rem;
@@ -388,14 +388,14 @@
       transition: all 0.2s ease;
     }
     .btn-hint:hover {
-      background: var(--accent);
+      background: #A68A5B;
       color: white;
     }
     .btn-hint:disabled {
       opacity: 0.35;
       cursor: default;
       background: none;
-      color: var(--accent);
+      color: #A68A5B;
     }
     .game-bottom-actions {
       display: flex;
@@ -560,20 +560,20 @@
       flex-direction: column;
       gap: 1rem;
     }
-    #game.game-expanded { max-width: 800px; }
+    #game.game-expanded { max-width: 900px; }
 
     @media (min-width: 769px) {
       #game.game-expanded .game-layout {
         flex-direction: row;
-        align-items: flex-start;
+        align-items: stretch;
       }
       #game.game-expanded .game-main {
         flex: 1;
         min-width: 0;
       }
       #game.game-expanded .game-sidebar {
-        width: 260px;
-        flex-shrink: 0;
+        flex: 1;
+        min-width: 0;
       }
     }
 
@@ -587,14 +587,14 @@
     }
     .france-map { width: 100%; height: auto; }
     .france-map path {
-      fill: var(--bg);
-      stroke: var(--border);
+      fill: #F9F7F4;
+      stroke: #C8BFB4;
       stroke-width: 0.5;
       transition: fill 0.4s ease;
     }
     .france-map path.found { fill: var(--success); }
     .france-map path.hinted {
-      stroke: var(--accent);
+      stroke: #A68A5B;
       stroke-width: 2.5;
       animation: hint-pulse 1.2s ease-in-out infinite;
     }
@@ -627,9 +627,9 @@
       color: white;
     }
     .dom-badge.hinted {
-      border-color: var(--accent);
+      border-color: #A68A5B;
       border-width: 2px;
-      color: var(--accent);
+      color: #A68A5B;
       animation: hint-pulse-badge 1.2s ease-in-out infinite;
     }
     @keyframes hint-pulse-badge {
@@ -1412,7 +1412,7 @@
       const count = streak >= 10 ? 40 : streak >= 5 ? 30 : 20;
       const colors = streak >= 10
         ? ['#C4A14A', '#D4B85A', '#E5C96B', '#B89A3A', '#A88A2A', '#F0DA7C']
-        : ['#5B8C6A', '#4A6670', '#C4564A', '#D4A853', '#7B6B8A', '#6A8A96'];
+        : ['#5B8C6A', '#5A6B66', '#C4564A', '#D4A853', '#7B6B8A', '#A68A5B'];
       for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.className = 'confetti';
