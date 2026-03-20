@@ -54,6 +54,10 @@
     body {
       font-family: var(--sans);
       background: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.2) 0%, transparent 60%),
+        repeating-conic-gradient(#0000 0% 25%, #8a7a6a05 0% 50%);
+      background-size: 100% 100%, 3px 3px;
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -109,10 +113,31 @@
 
     .home-ornament {
       display: block;
-      width: 40px;
-      height: 1px;
+      width: 60px;
+      height: 7px;
+      background: none;
+      margin: 1.5rem auto 0;
+      position: relative;
+    }
+    .home-ornament::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 0;
+      right: 0;
+      height: 0.5px;
       background: var(--text-light);
-      margin: 1.25rem auto 0;
+    }
+    .home-ornament::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: var(--bg);
+      border: 0.5px solid var(--text-light);
+      transform: translate(-50%, -50%) rotate(45deg);
     }
 
     .home-buttons {
@@ -129,15 +154,16 @@
       padding: 1rem 1.5rem;
       border: 1px solid var(--border);
       border-radius: 6px;
-      background: transparent;
+      background: linear-gradient(var(--text) 0 0) no-repeat left;
+      background-size: 0% 100%;
       color: var(--text);
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: background-size 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease, border-color 0.3s ease;
       position: relative;
     }
 
     .btn:hover {
-      background: var(--text);
+      background-size: 100% 100%;
       color: var(--bg);
       border-color: var(--text);
     }
@@ -151,7 +177,7 @@
     }
 
     .btn:hover .btn-sub {
-      color: var(--text-light);
+      color: var(--bg-subtle);
     }
 
     /* ─── Department number ─── */
@@ -687,7 +713,18 @@
 
     .btn-quick-group {
       text-align: center;
-      margin-top: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      position: relative;
+    }
+    .btn-quick-group::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 25%;
+      right: 25%;
+      height: 0.5px;
+      background: var(--border);
     }
 
     .btn-quick-label {
@@ -709,6 +746,21 @@
     .btn-quick {
       font-size: 1rem;
       padding: 0.65rem 1.25rem;
+    }
+
+    /* ─── Staggered entrance ─── */
+
+    #home.active .home-header {
+      animation: fadeIn 0.7s ease both;
+    }
+    #home.active .home-buttons > *:nth-child(1) {
+      animation: fadeIn 0.5s 0.12s ease both;
+    }
+    #home.active .home-buttons > *:nth-child(2) {
+      animation: fadeIn 0.5s 0.22s ease both;
+    }
+    #home.active .home-buttons > *:nth-child(3) {
+      animation: fadeIn 0.5s 0.32s ease both;
     }
   </style>
 </head>
