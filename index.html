@@ -637,54 +637,6 @@
       50% { opacity: 0.4; }
     }
 
-    /* ─── Found list ─── */
-
-    .found-list-container {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.75rem;
-    }
-    .found-list-header {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-    .found-count {
-      font-family: var(--sans);
-      font-size: 0.88rem;
-      color: var(--text-light);
-      margin-bottom: 0.5rem;
-    }
-    #found-list {
-      list-style: none;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    #found-list li {
-      padding: 0.35rem 0;
-      border-bottom: 1px solid var(--border);
-      font-family: var(--sans);
-      font-size: 0.95rem;
-      font-weight: 300;
-      color: var(--text-muted);
-      animation: fadeIn 0.3s ease;
-    }
-    #found-list li span {
-      font-family: var(--serif);
-      font-weight: 600;
-      font-style: italic;
-      color: var(--text);
-      margin-right: 0.5rem;
-    }
-    #found-list::-webkit-scrollbar { width: 3px; }
-    #found-list::-webkit-scrollbar-track { background: transparent; }
-    #found-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
     /* ─── Streak ─── */
 
     .streak-display {
@@ -917,11 +869,6 @@
             <span class="dom-badge" id="dept-976">976</span>
           </div>
         </div>
-        <div id="found-list-container" class="found-list-container" style="display:none;">
-          <div class="found-list-header">Départements trouvés</div>
-          <div id="found-count" class="found-count">0 / 101</div>
-          <ul id="found-list"></ul>
-        </div>
       </div>
     </div>
   </section>
@@ -964,12 +911,6 @@
         <input type="checkbox" id="setting-map">
         <span class="toggle-track"><span class="toggle-thumb"></span></span>
         <span class="setting-desc">Affiche la carte de France pendant la partie complète</span>
-      </label>
-      <label class="setting-toggle">
-        <span class="setting-label">Départements trouvés</span>
-        <input type="checkbox" id="setting-found-list">
-        <span class="toggle-track"><span class="toggle-thumb"></span></span>
-        <span class="setting-desc">Liste les départements déjà trouvés pendant la partie</span>
       </label>
     </div>
     <button id="btn-settings-back" class="btn" style="margin-top:1rem;">Retour</button>
@@ -1051,8 +992,8 @@
     function loadSettings() {
       try {
         const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
-        return { mapEnabled: saved?.mapEnabled ?? false, foundListEnabled: saved?.foundListEnabled ?? false };
-      } catch { return { mapEnabled: false, foundListEnabled: false }; }
+        return { mapEnabled: saved?.mapEnabled ?? true };
+      } catch { return { mapEnabled: true }; }
     }
     function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
     let settings = loadSettings();
@@ -1111,33 +1052,11 @@
       showScreen(screen, { pushState: false });
     });
 
-    let foundDepartments = [];
-
-    function addToFoundList(code, name) {
-      foundDepartments.push({ code, name });
-      foundDepartments.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-      renderFoundList();
-    }
-
-    function renderFoundList() {
-      const list = document.getElementById('found-list');
-      const count = document.getElementById('found-count');
-      list.innerHTML = '';
-      count.textContent = foundDepartments.length + ' / ' + Object.keys(DEPARTEMENTS).length;
-      foundDepartments.forEach(({ code, name }) => {
-        const li = document.createElement('li');
-        li.innerHTML = '<span>' + code + '</span>' + name;
-        list.appendChild(li);
-      });
-      list.scrollTop = list.scrollHeight;
-    }
-
     function markDepartmentFound(code) {
       const path = document.getElementById('dept-' + code);
       if (path) path.classList.add('found');
       const domBadge = document.querySelector('.dom-badge#dept-' + code);
       if (domBadge) domBadge.classList.add('found');
-      addToFoundList(code, DEPARTEMENTS[code]);
     }
 
     function clearHint() {
@@ -1170,14 +1089,11 @@
 
     function updateGameSidebar() {
       const mapContainer = document.getElementById('map-container');
-      const foundContainer = document.getElementById('found-list-container');
       const sidebar = document.getElementById('game-sidebar');
       const gameSection = document.getElementById('game');
       mapContainer.style.display = settings.mapEnabled ? '' : 'none';
-      foundContainer.style.display = settings.foundListEnabled ? '' : 'none';
-      const sidebarVisible = settings.mapEnabled || settings.foundListEnabled;
-      sidebar.style.display = sidebarVisible ? 'flex' : 'none';
-      gameSection.classList.toggle('game-expanded', sidebarVisible);
+      sidebar.style.display = settings.mapEnabled ? 'flex' : 'none';
+      gameSection.classList.toggle('game-expanded', settings.mapEnabled);
     }
 
     // ─── Quiz Engine ───
@@ -1258,11 +1174,9 @@
       currentMode = mode;
       const entries = mode === 'prefectures' ? buildPrefectureEntries() : buildDepartementEntries();
 
-      foundDepartments = [];
       document.querySelectorAll('.france-map path.found').forEach(p => p.classList.remove('found'));
       document.querySelectorAll('.dom-badge.found').forEach(b => b.classList.remove('found'));
       clearHint();
-      renderFoundList();
       updateGameSidebar();
       hideStreak();
 
@@ -1539,13 +1453,8 @@
       settings.mapEnabled = e.target.checked;
       saveSettings(settings);
     });
-    document.getElementById('setting-found-list').addEventListener('change', (e) => {
-      settings.foundListEnabled = e.target.checked;
-      saveSettings(settings);
-    });
     // Initialize toggles from saved settings
     document.getElementById('setting-map').checked = settings.mapEnabled;
-    document.getElementById('setting-found-list').checked = settings.foundListEnabled;
   </script>
 
 </body>
