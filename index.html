@@ -41,6 +41,7 @@
       --success-light: #E0EDDF;
       --error: #C4564A;
       --error-light: #F2E3E0;
+      --map-fill: #F9F7F4;
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'Outfit', system-ui, sans-serif;
     }
@@ -613,12 +614,19 @@
     }
     .france-map { width: 100%; height: auto; }
     .france-map path {
-      fill: #F9F7F4;
+      fill: var(--map-fill);
       stroke: #C8BFB4;
       stroke-width: 0.5;
       transition: fill 0.4s ease;
     }
     .france-map path.found { fill: var(--success); }
+    .france-map path.just-found {
+      animation: dept-blink 0.3s ease-in-out 3;
+    }
+    @keyframes dept-blink {
+      0%, 100% { fill: var(--success); }
+      50% { fill: var(--map-fill); }
+    }
     .france-map path.hinted {
       stroke: #A68A5B;
       stroke-width: 2.5;
@@ -651,6 +659,13 @@
       background: var(--success);
       border-color: var(--success);
       color: white;
+    }
+    .dom-badge.just-found {
+      animation: badge-blink 0.3s ease-in-out 3;
+    }
+    @keyframes badge-blink {
+      0%, 100% { background: var(--success); border-color: var(--success); color: white; }
+      50% { background: var(--bg); border-color: var(--border); color: var(--text-muted); }
     }
     .dom-badge.hinted {
       border-color: #A68A5B;
@@ -1104,11 +1119,16 @@
       showScreen(screen, { pushState: false });
     });
 
+    function flashFound(el) {
+      el.classList.add('found', 'just-found');
+      el.addEventListener('animationend', () => el.classList.remove('just-found'), { once: true });
+    }
+
     function markDepartmentFound(code) {
       const path = document.getElementById('dept-' + code);
-      if (path) path.classList.add('found');
+      if (path) flashFound(path);
       const domBadge = document.querySelector('.dom-badge#dept-' + code);
-      if (domBadge) domBadge.classList.add('found');
+      if (domBadge) flashFound(domBadge);
     }
 
     function clearHint() {
