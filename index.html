@@ -261,6 +261,10 @@
       color: var(--error);
     }
 
+    #reveal-text.correct {
+      color: var(--success);
+    }
+
     /* ─── Progress bar ─── */
 
     .progress-bar {
@@ -1099,6 +1103,11 @@
       return levenshtein(normalize(input), normalize(expected)) <= 2;
     }
 
+    function displayWithPrefecture(name, code) {
+      const pref = PREFECTURES[code];
+      return pref ? `${name} — ${pref}` : name;
+    }
+
     const sections = document.querySelectorAll('section');
 
     let previousScreen = 'home';
@@ -1328,10 +1337,16 @@
       input.disabled = true;
       input.classList.add('input-correct');
       number.classList.add('number-correct');
+      const reveal = document.getElementById('reveal-text');
+      reveal.textContent = displayWithPrefecture(entry.display, entry.code);
+      reveal.className = 'correct';
+      reveal.style.display = 'block';
       spawnConfetti(streak);
       setTimeout(() => {
         input.classList.remove('input-correct');
         number.classList.remove('number-correct');
+        reveal.style.display = 'none';
+        reveal.className = '';
         if (engine.advance()) showCurrentQuestion();
       }, 1500);
     }
@@ -1349,7 +1364,8 @@
       input.disabled = true;
       input.classList.add('input-wrong');
       const reveal = document.getElementById('reveal-text');
-      reveal.textContent = entry.display;
+      reveal.textContent = displayWithPrefecture(entry.display, entry.code);
+      reveal.className = '';
       reveal.style.display = 'block';
       setTimeout(() => {
         reveal.style.display = 'none';
@@ -1471,6 +1487,7 @@
       input.focus();
       input.dataset.answer = entry.answer;
       input.dataset.display = entry.display;
+      input.dataset.code = entry.code;
       document.getElementById('single-result').textContent = '';
       document.getElementById('single-result').className = 'result-text';
       showScreen('single');
@@ -1483,13 +1500,14 @@
       if (!value) return;
       const expected = input.dataset.answer;
       const display = input.dataset.display;
+      const fullDisplay = displayWithPrefecture(display, input.dataset.code);
       const result = document.getElementById('single-result');
       if (checkAnswer(value, expected)) {
-        result.textContent = `Correct\u00a0! C'est bien ${display}`;
+        result.textContent = `Correct\u00a0! C'est bien ${fullDisplay}`;
         result.className = 'result-text correct';
         spawnConfetti(1);
       } else {
-        result.textContent = `Raté\u00a0! C'était ${display}`;
+        result.textContent = `Raté\u00a0! C'était ${fullDisplay}`;
         result.className = 'result-text wrong';
       }
       input.disabled = true;
