@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#F7F2EB"/>
+      <stop offset="100%" stop-color="#EFE9E2"/>
+    </radialGradient>
+    <pattern id="dots" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.8" fill="#8a7a6a" opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Hexagonal France silhouette, decorative -->
+  <g transform="translate(840 315)" opacity="0.18">
+    <path d="M0 -180 L156 -90 L156 90 L0 180 L-156 90 L-156 -90 Z"
+          fill="none" stroke="#5A6B66" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M0 -180 L156 -90 L156 90 L0 180 L-156 90 L-156 -90 Z"
+          fill="#5A6B66" opacity="0.08"/>
+  </g>
+
+  <!-- Label -->
+  <text x="100" y="180" font-family="Outfit, system-ui, sans-serif"
+        font-size="26" font-weight="500" letter-spacing="6"
+        fill="#8E857C" text-transform="uppercase">
+    CONNAISSEZ-VOUS LA FRANCE ?
+  </text>
+
+  <!-- Title -->
+  <text x="100" y="300" font-family="Cormorant Garamond, Georgia, serif"
+        font-size="120" font-weight="700" font-style="italic"
+        fill="#2A2725">
+    Quiz
+  </text>
+  <text x="100" y="420" font-family="Cormorant Garamond, Georgia, serif"
+        font-size="120" font-weight="700" font-style="italic"
+        fill="#2A2725">
+    Départements
+  </text>
+
+  <!-- Ornament -->
+  <line x1="100" y1="460" x2="200" y2="460" stroke="#5A6B66" stroke-width="2"/>
+
+  <!-- Subtitle -->
+  <text x="100" y="520" font-family="Outfit, system-ui, sans-serif"
+        font-size="28" font-weight="400" fill="#5A6B66">
+    Les 101 départements et préfectures français
+  </text>
+</svg>
