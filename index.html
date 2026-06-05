@@ -93,12 +93,14 @@
       background-size: 100% 100%, 3px 3px;
       color: var(--text);
       min-height: 100vh;
+      /* Column flow so the footer lives in-flow at the bottom (never a fixed
+         overlay): the active section is centered via auto margins, and on
+         short viewports the page scrolls with the footer below the content
+         instead of floating on top of it. */
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      /* Reserve room for the fixed settings gear (top-right) and footer
-         (bottom-right) so centered content never overlaps them. */
-      padding: 4rem 0;
+      padding: 1.5rem 0;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -110,6 +112,8 @@
     }
 
     section.active {
+      /* Center vertically in the space above the in-flow footer. */
+      margin: auto 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -616,9 +620,9 @@
     /* ─── Footer ─── */
 
     footer {
-      position: fixed;
-      bottom: 1rem;
-      right: 1.5rem;
+      align-self: flex-end;
+      margin-top: 1.5rem;
+      padding: 0 1.5rem;
       font-family: var(--sans);
       font-size: 0.8rem;
       font-weight: 400;
