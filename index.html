@@ -55,6 +55,46 @@
     }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Comment jouer ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Choisissez un mode : en « Départements », trouvez le nom à partir du numéro ; en « Préfectures », trouvez la préfecture à partir du département. Vous avez trois tentatives par question, et le bouton « Indice » situe le département sur la carte."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Faut-il écrire les noms sans faute ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. Les accents, tirets, apostrophes et majuscules sont ignorés, et les petites fautes de frappe (deux caractères au plus) sont acceptées."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quels départements sont inclus ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Les 96 départements de métropole, dont la Corse-du-Sud (2A) et la Haute-Corse (2B), et les 5 départements d'outre-mer : Guadeloupe (971), Martinique (972), Guyane (973), La Réunion (974) et Mayotte (976)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Le quiz est-il gratuit ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, entièrement, sans compte à créer."
+        }
+      }
+    ]
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -218,6 +258,59 @@
 
     .btn:hover .btn-sub {
       color: var(--bg-subtle);
+    }
+
+    .home-about {
+      width: 100%;
+      margin-top: 2.5rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .home-about-title {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .home-about > p {
+      margin-bottom: 1rem;
+    }
+
+    .home-about details {
+      border-top: 0.5px solid var(--border);
+    }
+    .home-about details:last-child {
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .home-about summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.6rem 0;
+      color: var(--text);
+    }
+    .home-about summary::-webkit-details-marker {
+      display: none;
+    }
+    .home-about summary::after {
+      content: '+';
+      float: right;
+      margin-left: 1rem;
+      color: var(--text-light);
+    }
+    .home-about details[open] summary::after {
+      content: '\2212';
+    }
+
+    .home-about details p {
+      padding-bottom: 0.75rem;
     }
 
     /* ─── Department number ─── */
@@ -951,6 +1044,9 @@
     #home.active .home-buttons > *:nth-child(3) {
       animation: fadeIn 0.5s 0.32s ease both;
     }
+    #home.active .home-about {
+      animation: fadeIn 0.5s 0.42s ease both;
+    }
   </style>
 </head>
 <body>
@@ -978,6 +1074,26 @@
           <button id="btn-single-pref" class="btn btn-quick">Préfecture</button>
         </div>
       </div>
+    </div>
+    <div class="home-about">
+      <h2 class="home-about-title">Le quiz en bref</h2>
+      <p>Un quiz gratuit pour apprendre les 101 départements français et leurs préfectures, DOM et Corse compris. Sans inscription ni publicité, sur ordinateur comme sur mobile.</p>
+      <details>
+        <summary>Comment jouer ?</summary>
+        <p>Choisissez un mode : en « Départements », trouvez le nom à partir du numéro ; en « Préfectures », trouvez la préfecture à partir du département. Vous avez trois tentatives par question, et le bouton « Indice » situe le département sur la carte.</p>
+      </details>
+      <details>
+        <summary>Faut-il écrire les noms sans faute ?</summary>
+        <p>Non. Les accents, tirets, apostrophes et majuscules sont ignorés, et les petites fautes de frappe (deux caractères au plus) sont acceptées.</p>
+      </details>
+      <details>
+        <summary>Quels départements sont inclus ?</summary>
+        <p>Les 96 départements de métropole, dont la Corse-du-Sud (2A) et la Haute-Corse (2B), et les 5 départements d'outre-mer : Guadeloupe (971), Martinique (972), Guyane (973), La Réunion (974) et Mayotte (976).</p>
+      </details>
+      <details>
+        <summary>Le quiz est-il gratuit ?</summary>
+        <p>Oui, entièrement, sans compte à créer.</p>
+      </details>
     </div>
   </section>
 
