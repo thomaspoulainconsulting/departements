@@ -20,7 +20,9 @@ Jeu de quiz pour tester vos connaissances sur les départements et préfectures 
 
 **Préfectures** — Les 101 préfectures dans un ordre aléatoire. Devinez la préfecture à partir du nom du département. 3 tentatives par question.
 
-**Question rapide** — Un département ou une préfecture au hasard, une seule question. Idéal pour s'entraîner rapidement.
+**Numéros** — Les 101 départements dans un ordre aléatoire. Retrouvez le numéro à partir du nom. Saisie exacte, zéro initial facultatif : `1` ou `01`, `2A`/`2B` (majuscules ou minuscules), `971`… Pavé numérique sur mobile (clavier texte pour la Corse) avec un bouton « Valider ». 3 tentatives par question.
+
+**Question rapide** — Un département, une préfecture ou un numéro au hasard, une seule question. Idéal pour s'entraîner rapidement.
 
 ## Fonctionnalités
 

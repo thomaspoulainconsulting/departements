@@ -1,6 +1,6 @@
 # Quiz Départements
 
-> Quiz gratuit en ligne, en français, pour apprendre les 101 départements français et leurs préfectures. Sans inscription ni publicité, il se joue dans le navigateur sur ordinateur comme sur mobile.
+> Quiz gratuit en ligne, en français, pour apprendre les 101 départements français, leurs numéros et leurs préfectures. Sans inscription ni publicité, il se joue dans le navigateur sur ordinateur comme sur mobile.
 
 URL : https://jeudesdepartements.netlify.app/
 
@@ -8,7 +8,8 @@ URL : https://jeudesdepartements.netlify.app/
 
 - **Départements** : les 101 départements (96 en métropole, dont 2A Corse-du-Sud et 2B Haute-Corse, plus 5 DOM : 971 Guadeloupe, 972 Martinique, 973 Guyane, 974 La Réunion, 976 Mayotte) dans un ordre aléatoire. Le jeu affiche le numéro, le joueur tape le nom. 3 tentatives par question.
 - **Préfectures** : les 101 préfectures dans un ordre aléatoire. Le jeu affiche le département, le joueur tape sa préfecture. 3 tentatives par question.
-- **Question rapide** : une seule question, sur un département ou une préfecture tiré au hasard.
+- **Numéros** : les 101 départements dans un ordre aléatoire. Le jeu affiche le nom, le joueur tape le numéro (saisie exacte, zéro initial facultatif : `1` ou `01`, `2A`/`2B`, `971`…). 3 tentatives par question.
+- **Question rapide** : une seule question, sur un département, une préfecture ou un numéro tiré au hasard.
 
 ## Fonctionnalités
 

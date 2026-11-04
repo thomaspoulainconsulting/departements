@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Départements — Devinez les 101 départements français</title>
-  <meta name="description" content="Quiz gratuit pour apprendre les 101 départements français et leurs préfectures. Carte interactive, indices et suivi de progression.">
+  <meta name="description" content="Quiz gratuit pour apprendre les 101 départements français, leurs numéros et leurs préfectures. Carte interactive, indices et suivi de progression.">
   <link rel="canonical" href="https://jeudesdepartements.netlify.app/">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://jeudesdepartements.netlify.app/">
   <meta property="og:title" content="Quiz Départements — Devinez les 101 départements français">
-  <meta property="og:description" content="Quiz gratuit pour apprendre les 101 départements français et leurs préfectures. Carte interactive, indices et suivi de progression.">
+  <meta property="og:description" content="Quiz gratuit pour apprendre les 101 départements français, leurs numéros et leurs préfectures. Carte interactive, indices et suivi de progression.">
   <meta property="og:image" content="https://jeudesdepartements.netlify.app/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -22,7 +22,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Quiz Départements — Devinez les 101 départements français">
-  <meta name="twitter:description" content="Quiz gratuit pour apprendre les 101 départements français et leurs préfectures.">
+  <meta name="twitter:description" content="Quiz gratuit pour apprendre les 101 départements français, leurs numéros et leurs préfectures.">
   <meta name="twitter:image" content="https://jeudesdepartements.netlify.app/og-image.png">
 
   <!-- Misc SEO -->
@@ -38,7 +38,7 @@
     "@type": "WebApplication",
     "name": "Quiz Départements",
     "url": "https://jeudesdepartements.netlify.app/",
-    "description": "Quiz gratuit pour apprendre les 101 départements français et leurs préfectures. Carte interactive, indices et suivi de progression.",
+    "description": "Quiz gratuit pour apprendre les 101 départements français, leurs numéros et leurs préfectures. Carte interactive, indices et suivi de progression.",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Any",
     "inLanguage": "fr-FR",
@@ -65,7 +65,7 @@
         "name": "Comment jouer ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Choisissez un mode : en « Départements », trouvez le nom à partir du numéro ; en « Préfectures », trouvez la préfecture à partir du département. Vous avez trois tentatives par question, et le bouton « Indice » situe le département sur la carte."
+          "text": "Choisissez un mode : en « Départements », trouvez le nom à partir du numéro ; en « Préfectures », trouvez la préfecture à partir du département ; en « Numéros », retrouvez le numéro à partir du nom. Vous avez trois tentatives par question, et le bouton « Indice » situe le département sur la carte."
         }
       },
       {
@@ -104,16 +104,25 @@
       --bg: #EFE9E2;
       --bg-subtle: #DED6CC;
       --text: #2A2725;
-      --text-muted: #8E857C;
-      --text-light: #B5AB9F;
-      --accent: #5A6B66;
-      --accent-light: #7A9590;
+      --text-muted: #645B52;
+      --text-light: #7A7065;
+      --accent: #3D6B7D;
+      --accent-light: #6E97A6;
       --border: #D9D1C8;
       --success: #5B8C6A;
       --success-light: #E0EDDF;
       --error: #C4564A;
       --error-light: #F2E3E0;
       --map-fill: #F9F7F4;
+      --sea: #CFDDD9;
+      --sea-border: #BACDC8;
+      /* Printed-atlas plates for found departments */
+      --atlas-ochre: #E6C36A;
+      --atlas-rose: #E8A595;
+      --atlas-green: #A9C79C;
+      --atlas-blue: #9DC0D6;
+      --atlas-lilac: #C2B0D4;
+      --hint: #806A40;
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'Outfit', system-ui, sans-serif;
     }
@@ -127,10 +136,7 @@
     body {
       font-family: var(--sans);
       background: var(--bg);
-      background-image:
-        radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.2) 0%, transparent 60%),
-        repeating-conic-gradient(#0000 0% 25%, #8a7a6a05 0% 50%);
-      background-size: 100% 100%, 3px 3px;
+      background-image: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.2) 0%, transparent 60%);
       color: var(--text);
       min-height: 100vh;
       /* Column flow so the footer lives in-flow at the bottom (never a fixed
@@ -142,6 +148,20 @@
       align-items: center;
       padding: 1.5rem 0;
       -webkit-font-smoothing: antialiased;
+    }
+
+    /* Paper grain: static warm-brown noise over everything (map and buttons
+       look printed too), below the quit modal and confetti. */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      opacity: 0.2;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.33 0 0 0 0 0.24 0 0 0 3 -1.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") repeat;
+      background-size: 180px 180px;
     }
 
     section {
@@ -171,14 +191,23 @@
       margin-bottom: 3rem;
     }
 
-    .home-label {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+    /* Questions addressed to the player */
+    .home-label, .dept-prefix {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      font-style: italic;
       color: var(--text-muted);
       margin-bottom: 0.75rem;
+    }
+
+    /* Section labels */
+    .home-about-title, .results-label, #results h2, .btn-quick-label {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--text-muted);
     }
 
     #home h1 {
@@ -218,6 +247,19 @@
       background: var(--bg);
       border: 0.5px solid var(--text-light);
       transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    /* Tiny coloured France (clone of the game map) instead of the diamond. */
+    .home-map {
+      display: block;
+      width: 120px;
+      height: auto;
+      margin: 1.5rem auto 0;
+    }
+    .home-map path {
+      fill: var(--found);
+      stroke: rgba(42, 39, 37, 0.35);
+      stroke-width: 1.5;
     }
 
     .home-buttons {
@@ -269,12 +311,6 @@
     }
 
     .home-about-title {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
       text-align: center;
       margin-bottom: 0.75rem;
     }
@@ -321,12 +357,6 @@
     }
 
     .dept-prefix {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
       margin-bottom: 0.25rem;
     }
 
@@ -341,6 +371,11 @@
       transition: color 0.3s ease;
     }
 
+    /* Cormorant's default old-style digits make "30" read "3o". */
+    .dept-number, #final-score, #missed-list li span, .dom-badge, #reveal-text, .result-text {
+      font-variant-numeric: lining-nums;
+    }
+
     /* ─── Input fields ─── */
 
     input[type="text"] {
@@ -348,7 +383,8 @@
       font-size: 1.3rem;
       font-weight: 300;
       letter-spacing: 0.02em;
-      padding: 0.875rem 0;
+      /* Symmetric inline padding keeps the text centred and clears the send button. */
+      padding: 0.875rem 2.75rem;
       border: none;
       border-bottom: 1.5px solid var(--border);
       border-radius: 0;
@@ -369,6 +405,62 @@
 
     input[type="text"]:focus {
       border-color: var(--accent);
+    }
+
+    .answer-row {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* Send button at the input's right end (the iOS numeric pad has no Enter key):
+       44×44 hit area, 34px accent circle drawn by the content-box background. */
+    .btn-submit {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 1.5px; /* above the underline */
+      width: 2.75rem;
+      height: 2.75rem;
+      margin-block: auto; /* centred on the text line */
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent) content-box;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--map-fill);
+      transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s, background-color 0.15s ease;
+    }
+    .btn-submit:hover, .btn-submit:active { background-color: color-mix(in srgb, var(--accent) 85%, black); }
+    /* Nothing to send yet, or feedback in progress: hidden and out of the tab order. */
+    .answer-row input:placeholder-shown ~ .btn-submit,
+    .answer-row input:disabled ~ .btn-submit {
+      opacity: 0;
+      transform: scale(0.8);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .mode-numeros .answer-row {
+      max-width: 10rem;
+    }
+
+    /* Numéros mode: the answer echoes the hero number. */
+    .mode-numeros input[type="text"] {
+      font-family: var(--serif);
+      font-size: 3rem;
+      font-weight: 700;
+      font-style: italic;
+      font-variant-numeric: lining-nums;
+      letter-spacing: 0;
+      padding-block: 0.25rem;
+    }
+
+    .mode-numeros input[type="text"]::placeholder {
+      font-weight: 400;
     }
 
     /* ─── Attempts ─── */
@@ -421,7 +513,7 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 3px;
+      height: 4px;
       background: transparent;
       overflow: hidden;
       z-index: 200;
@@ -444,15 +536,6 @@
       gap: 1rem;
     }
 
-    .results-label {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
     #final-score {
       font-family: var(--serif);
       font-size: 4.5rem;
@@ -471,12 +554,6 @@
     }
 
     #results h2 {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
       margin-top: 0.5rem;
     }
 
@@ -533,26 +610,6 @@
       padding: 0.75rem 1.5rem;
     }
 
-    /* ─── Quit button ─── */
-
-    .btn-quit {
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 400;
-      letter-spacing: 0.05em;
-      color: var(--text-light);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0.5rem 0;
-      margin-top: 0.5rem;
-      transition: color 0.2s ease;
-    }
-
-    .btn-quit:hover {
-      color: var(--text-muted);
-    }
-
     /* ─── Modal ─── */
 
     .modal-overlay {
@@ -564,14 +621,14 @@
       align-items: center;
       z-index: 1000;
       padding: 1.5rem;
-      animation: fadeIn 0.2s ease;
+      animation: overlayIn 0.2s ease;
     }
 
     .modal-overlay[hidden] {
       display: none;
     }
 
-    @keyframes fadeIn {
+    @keyframes overlayIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
@@ -653,9 +710,9 @@
       font-size: 0.85rem;
       font-weight: 400;
       letter-spacing: 0.05em;
-      color: #A68A5B;
+      color: var(--hint);
       background: none;
-      border: 1px solid #A68A5B;
+      border: 1px solid var(--hint);
       border-radius: 4px;
       cursor: pointer;
       padding: 0.4rem 1rem;
@@ -663,14 +720,14 @@
       transition: all 0.2s ease;
     }
     .btn-hint:hover {
-      background: #A68A5B;
+      background: var(--hint);
       color: white;
     }
     .btn-hint:disabled {
       opacity: 0.35;
       cursor: default;
       background: none;
-      color: #A68A5B;
+      color: var(--hint);
     }
     .game-bottom-actions {
       display: flex;
@@ -747,9 +804,9 @@
       border-radius: 2px;
     }
 
-    /* ─── Settings gear ─── */
+    /* ─── Settings gear + quit cross (top corners) ─── */
 
-    .settings-gear {
+    .settings-gear, .btn-quit {
       position: fixed;
       top: 1rem;
       right: 1.5rem;
@@ -761,7 +818,9 @@
       transition: color 0.2s ease;
       z-index: 100;
     }
-    .settings-gear:hover { color: var(--text-muted); }
+    /* Child of #game, so hidden with it on every other screen. */
+    .btn-quit { right: auto; left: 1.5rem; }
+    .settings-gear:hover, .btn-quit:hover { color: var(--text-muted); }
 
     /* ─── Settings screen ─── */
 
@@ -794,7 +853,13 @@
       width: 100%;
       margin-top: 0.25rem;
     }
-    .setting-toggle input[type="checkbox"] { display: none; }
+    /* Visually hidden but keyboard reachable */
+    .setting-toggle input[type="checkbox"] {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
     .toggle-track {
       width: 36px; height: 20px;
       background: var(--border);
@@ -874,8 +939,8 @@
     /* ─── France map ─── */
 
     .map-container {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border);
+      background: var(--sea);
+      border: 1px solid var(--sea-border);
       border-radius: 6px;
       padding: 0.75rem;
     }
@@ -886,16 +951,19 @@
       stroke-width: 0.5;
       transition: fill 0.4s ease;
     }
-    .france-map path.found { fill: var(--success); }
+    .france-map path.found {
+      fill: var(--found, var(--success));
+      stroke: rgba(42, 39, 37, 0.35);
+    }
     .france-map path.just-found {
       animation: dept-blink 0.3s ease-in-out 3;
     }
     @keyframes dept-blink {
-      0%, 100% { fill: var(--success); }
+      0%, 100% { fill: var(--found, var(--success)); }
       50% { fill: var(--map-fill); }
     }
     .france-map path.hinted {
-      stroke: #A68A5B;
+      stroke: var(--hint);
       stroke-width: 2.5;
       animation: hint-pulse 1.2s ease-in-out infinite;
     }
@@ -917,27 +985,27 @@
       letter-spacing: 0.05em;
       padding: 0.2rem 0.4rem;
       border-radius: 3px;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: var(--map-fill);
+      border: 1px solid var(--sea-border);
       color: var(--text-muted);
       transition: all 0.4s ease;
     }
     .dom-badge.found {
-      background: var(--success);
-      border-color: var(--success);
-      color: white;
+      background: var(--found, var(--success));
+      border-color: rgba(42, 39, 37, 0.35);
+      color: var(--text);
     }
     .dom-badge.just-found {
       animation: badge-blink 0.3s ease-in-out 3;
     }
     @keyframes badge-blink {
-      0%, 100% { background: var(--success); border-color: var(--success); color: white; }
-      50% { background: var(--bg); border-color: var(--border); color: var(--text-muted); }
+      0%, 100% { background: var(--found, var(--success)); border-color: rgba(42, 39, 37, 0.35); color: var(--text); }
+      50% { background: var(--map-fill); border-color: var(--sea-border); color: var(--text-muted); }
     }
     .dom-badge.hinted {
-      border-color: #A68A5B;
+      border-color: var(--hint);
       border-width: 2px;
-      color: #A68A5B;
+      color: var(--hint);
       animation: hint-pulse-badge 1.2s ease-in-out infinite;
     }
     @keyframes hint-pulse-badge {
@@ -1010,24 +1078,18 @@
     }
 
     .btn-quick-label {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 400;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
       margin-bottom: 0.5rem;
     }
 
     .btn-quick-buttons {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 0.5rem;
-      justify-content: center;
     }
 
     .btn-quick {
-      font-size: 1rem;
-      padding: 0.65rem 1.25rem;
+      font-size: 0.9rem;
+      padding: 0.65rem 0.25rem;
     }
 
     /* ─── Staggered entrance ─── */
@@ -1044,8 +1106,39 @@
     #home.active .home-buttons > *:nth-child(3) {
       animation: fadeIn 0.5s 0.32s ease both;
     }
-    #home.active .home-about {
+    #home.active .home-buttons > *:nth-child(4) {
       animation: fadeIn 0.5s 0.42s ease both;
+    }
+    #home.active .home-about {
+      animation: fadeIn 0.5s 0.52s ease both;
+    }
+
+    /* ─── Accessibility ─── */
+
+    .btn:focus-visible, .btn-hint:focus-visible, .btn-quit:focus-visible,
+    .modal-btn:focus-visible, .settings-gear:focus-visible, .btn-submit:focus-visible,
+    .home-about summary:focus-visible, .setting-toggle input:focus-visible + .toggle-track {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .confetti { display: none; }
+    }
+
+    /* ─── Mobile ─── */
+
+    @media (max-width: 768px) {
+      /* Clear the fixed settings gear. */
+      body { padding-top: 4rem; }
+      .game-main { gap: 1.1rem; }
+      #attempts { margin-top: -0.5rem; }
     }
   </style>
 </head>
@@ -1056,31 +1149,36 @@
     <div class="home-header">
       <div class="home-label">Connaissez-vous la France ?</div>
       <h1>Quiz<br>Départements</h1>
-      <span class="home-ornament"></span>
+      <div id="home-map"></div>
     </div>
     <div class="home-buttons">
       <button id="btn-full" class="btn">
         Départements
-        <span class="btn-sub">Les 101 départements</span>
+        <span class="btn-sub">Du numéro au nom</span>
       </button>
       <button id="btn-prefectures" class="btn">
         Préfectures
-        <span class="btn-sub">Les 101 préfectures</span>
+        <span class="btn-sub">Du département à sa préfecture</span>
+      </button>
+      <button id="btn-numeros" class="btn">
+        Numéros
+        <span class="btn-sub">Du nom au numéro</span>
       </button>
       <div class="btn-quick-group">
         <div class="btn-quick-label">Question rapide</div>
         <div class="btn-quick-buttons">
           <button id="btn-single-dept" class="btn btn-quick">Département</button>
           <button id="btn-single-pref" class="btn btn-quick">Préfecture</button>
+          <button id="btn-single-num" class="btn btn-quick">Numéro</button>
         </div>
       </div>
     </div>
     <div class="home-about">
       <h2 class="home-about-title">Le quiz en bref</h2>
-      <p>Un quiz gratuit pour apprendre les 101 départements français et leurs préfectures, DOM et Corse compris. Sans inscription ni publicité, sur ordinateur comme sur mobile.</p>
+      <p>Un quiz gratuit pour apprendre les 101 départements français, leurs numéros et leurs préfectures, DOM et Corse compris. Sans inscription ni publicité, sur ordinateur comme sur mobile.</p>
       <details>
         <summary>Comment jouer ?</summary>
-        <p>Choisissez un mode : en « Départements », trouvez le nom à partir du numéro ; en « Préfectures », trouvez la préfecture à partir du département. Vous avez trois tentatives par question, et le bouton « Indice » situe le département sur la carte.</p>
+        <p>Choisissez un mode : en « Départements », trouvez le nom à partir du numéro ; en « Préfectures », trouvez la préfecture à partir du département ; en « Numéros », retrouvez le numéro à partir du nom. Vous avez trois tentatives par question, et le bouton « Indice » situe le département sur la carte.</p>
       </details>
       <details>
         <summary>Faut-il écrire les noms sans faute ?</summary>
@@ -1099,23 +1197,32 @@
 
   <!-- Full game screen -->
   <section id="game">
+    <button id="btn-quit" class="btn-quit" type="button" aria-label="Abandonner la partie" title="Abandonner">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M5 5l14 14M19 5L5 19"/>
+      </svg>
+    </button>
     <div class="game-layout">
       <div class="game-main">
         <div class="dept-number-wrap">
           <div id="dept-prefix" class="dept-prefix">Département n°</div>
           <div id="dept-number" class="dept-number"></div>
         </div>
-        <input type="text" id="answer-input" placeholder="Votre réponse..." autocomplete="off" enterkeyhint="done">
-        <div id="attempts"></div>
+        <div class="answer-row">
+          <input type="text" id="answer-input" placeholder="Votre réponse…" autocomplete="off" enterkeyhint="done">
+          <button id="btn-submit" class="btn-submit" type="button" aria-label="Valider la réponse" title="Valider">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 7"/></svg>
+          </button>
+        </div>
+        <div id="attempts" aria-live="polite"></div>
         <div id="streak-display" class="streak-display"></div>
-        <div id="reveal-text"></div>
+        <div id="reveal-text" aria-live="polite"></div>
         <div class="progress-bar">
           <div id="progress-fill" class="progress-fill"></div>
         </div>
         <div id="score-text" class="score-text"></div>
         <div class="game-bottom-actions">
           <button id="btn-hint" class="btn-hint">Indice</button>
-          <button id="btn-quit" class="btn-quit">Abandonner</button>
         </div>
       </div>
       <div class="game-sidebar" id="game-sidebar">
@@ -1236,8 +1343,13 @@
       <div id="single-prefix" class="dept-prefix">Département n°</div>
       <div id="single-number" class="dept-number"></div>
     </div>
-    <input type="text" id="single-input" placeholder="Votre réponse..." autocomplete="off" enterkeyhint="done">
-    <div id="single-result" class="result-text"></div>
+    <div class="answer-row">
+      <input type="text" id="single-input" placeholder="Votre réponse…" autocomplete="off" enterkeyhint="done">
+      <button id="btn-single-submit" class="btn-submit" type="button" aria-label="Valider la réponse" title="Valider">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 7"/></svg>
+      </button>
+    </div>
+    <div id="single-result" class="result-text" aria-live="polite"></div>
     <div class="single-buttons">
       <button id="btn-another" class="btn">Encore un</button>
       <button id="btn-back" class="btn">Retour</button>
@@ -1426,7 +1538,11 @@
       return dp[m][n];
     }
 
+    // Codes (start with a digit, names never do): exact match ignoring spaces, case and leading zeros (1 = 01, 2a = 2A).
+    const normalizeCode = s => s.replace(/\s+/g, '').toUpperCase().replace(/^0+(?=\d)/, '');
+
     function checkAnswer(input, expected) {
+      if (/^\d/.test(expected)) return normalizeCode(input) === normalizeCode(expected);
       return levenshtein(normalize(input), normalize(expected)) <= 2;
     }
 
@@ -1467,6 +1583,23 @@
       const screen = e.state && e.state.screen ? e.state.screen : 'home';
       showScreen(screen, { pushState: false });
     });
+
+    // Each department gets a fixed atlas plate (--found), used when found and by the home map.
+    // ponytail: colour = index in DEPARTEMENTS mod 5, so neighbours can occasionally share a
+    // colour (no adjacency data); upgrade path = greedy colouring from an adjacency list.
+    const ATLAS = ['ochre', 'rose', 'green', 'blue', 'lilac'];
+    Object.keys(DEPARTEMENTS).forEach((code, i) => {
+      document.getElementById('dept-' + code)?.style.setProperty('--found', `var(--atlas-${ATLAS[i % ATLAS.length]})`);
+    });
+
+    // Home ornament: decorative clone of the game map, ids stripped (they must stay unique).
+    const homeMap = document.querySelector('.france-map').cloneNode(true);
+    homeMap.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+    homeMap.removeAttribute('role');
+    homeMap.removeAttribute('aria-label');
+    homeMap.setAttribute('class', 'home-map');
+    homeMap.setAttribute('aria-hidden', 'true');
+    document.getElementById('home-map').replaceWith(homeMap);
 
     function flashFound(el) {
       el.classList.add('found', 'just-found');
@@ -1520,7 +1653,7 @@
     // ─── Quiz Engine ───
 
     let engine = null;
-    let currentMode = 'departements'; // 'departements' or 'prefectures'
+    let currentMode = 'departements'; // 'departements', 'prefectures' or 'numeros'
 
     function createQuizEngine(config) {
       const { entries, maxAttempts, onCorrect, onWrong, onReveal, onComplete, onStreakUpdate } = config;
@@ -1591,9 +1724,43 @@
       }));
     }
 
+    function buildNumeroEntries() {
+      return Object.keys(DEPARTEMENTS).map(code => ({
+        code, question: DEPARTEMENTS[code], answer: code, display: code
+      }));
+    }
+
+    const ENTRY_BUILDERS = { departements: buildDepartementEntries, prefectures: buildPrefectureEntries, numeros: buildNumeroEntries };
+    const PROMPTS = { departements: 'Département n°', prefectures: 'Quelle est la préfecture de', numeros: 'Quel est le numéro de' };
+
+    // Shared by the game and single screens: prompt, question, and the answer input for the current mode.
+    function renderQuestion(sectionId, entry) {
+      const section = document.getElementById(sectionId);
+      const numberEl = section.querySelector('.dept-number');
+      const input = section.querySelector('input');
+      const numeros = currentMode === 'numeros';
+
+      section.classList.toggle('mode-numeros', numeros);
+      section.querySelector('.dept-prefix').textContent = PROMPTS[currentMode];
+      numberEl.textContent = entry.question;
+      numberEl.classList.toggle('prefecture-question', currentMode !== 'departements');
+      numberEl.classList.remove('fade-in');
+      void numberEl.offsetWidth;
+      numberEl.classList.add('fade-in');
+
+      // Numeric pad, except Corsica (2A/2B) which needs letters.
+      input.inputMode = numeros && /^\d+$/.test(entry.code) ? 'numeric' : 'text';
+      if (numeros) input.setAttribute('autocapitalize', 'characters');
+      else input.removeAttribute('autocapitalize');
+      input.placeholder = numeros ? 'N°' : 'Votre réponse…';
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+    }
+
     function startGame(mode) {
       currentMode = mode;
-      const entries = mode === 'prefectures' ? buildPrefectureEntries() : buildDepartementEntries();
+      const entries = ENTRY_BUILDERS[mode]();
 
       document.querySelectorAll('.france-map path.found').forEach(p => p.classList.remove('found'));
       document.querySelectorAll('.dom-badge.found').forEach(b => b.classList.remove('found'));
@@ -1627,30 +1794,7 @@
     }
 
     function showCurrentQuestion() {
-      const entry = engine.currentEntry();
-      const prefix = document.getElementById('dept-prefix');
-      const numberEl = document.getElementById('dept-number');
-
-      if (currentMode === 'prefectures') {
-        prefix.textContent = 'Quelle est la préfecture de';
-        numberEl.textContent = entry.question;
-        numberEl.classList.add('prefecture-question');
-        numberEl.classList.remove('dept-question');
-      } else {
-        prefix.textContent = 'Département n°';
-        numberEl.textContent = entry.question;
-        numberEl.classList.add('dept-question');
-        numberEl.classList.remove('prefecture-question');
-      }
-
-      numberEl.classList.remove('fade-in');
-      void numberEl.offsetWidth;
-      numberEl.classList.add('fade-in');
-
-      const input = document.getElementById('answer-input');
-      input.value = '';
-      input.disabled = false;
-      input.focus();
+      renderQuestion('game', engine.currentEntry());
       document.getElementById('attempts').textContent = 'Tentative 1/3';
       document.getElementById('reveal-text').style.visibility = 'hidden';
       clearHint();
@@ -1704,7 +1848,7 @@
       input.disabled = true;
       input.classList.add('input-wrong');
       const reveal = document.getElementById('reveal-text');
-      reveal.textContent = displayWithPrefecture(entry.display, entry.code);
+      reveal.textContent = currentMode === 'numeros' ? `N°\u00a0${entry.code}` : displayWithPrefecture(entry.display, entry.code);
       reveal.className = '';
       reveal.style.visibility = 'visible';
       setTimeout(() => {
@@ -1734,14 +1878,14 @@
         missedHeading.textContent = 'Aucune erreur, bravo\u00a0!';
         missedHeading.style.color = 'var(--success)';
       } else {
-        missedHeading.textContent = currentMode === 'prefectures' ? 'Préfectures manquées' : 'Départements manqués';
+        missedHeading.textContent = { prefectures: 'Préfectures manquées', numeros: 'Numéros manqués' }[currentMode] || 'Départements manqués';
         missedHeading.style.color = '';
         missed.forEach((entry) => {
           const li = document.createElement('li');
           if (currentMode === 'prefectures') {
             li.innerHTML = `<span>${entry.code}</span>${entry.question} → ${entry.answer}`;
           } else {
-            li.innerHTML = `<span>${entry.code}</span>${entry.answer}`;
+            li.innerHTML = `<span>${entry.code}</span>${DEPARTEMENTS[entry.code]}`;
           }
           missedList.appendChild(li);
         });
@@ -1754,7 +1898,7 @@
       const count = streak >= 10 ? 40 : streak >= 5 ? 30 : 20;
       const colors = streak >= 10
         ? ['#C4A14A', '#D4B85A', '#E5C96B', '#B89A3A', '#A88A2A', '#F0DA7C']
-        : ['#5B8C6A', '#5A6B66', '#C4564A', '#D4A853', '#7B6B8A', '#A68A5B'];
+        : [...ATLAS.map(c => `var(--atlas-${c})`), 'var(--accent)', 'var(--success)'];
       for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.className = 'confetti';
@@ -1799,38 +1943,17 @@
 
     function startSingleQuestion(mode) {
       currentMode = mode;
-      const allEntries = mode === 'prefectures' ? buildPrefectureEntries() : buildDepartementEntries();
+      const allEntries = ENTRY_BUILDERS[mode]();
       const entry = allEntries[Math.floor(Math.random() * allEntries.length)];
 
-      const prefix = document.getElementById('single-prefix');
-      const numberEl = document.getElementById('single-number');
-
-      if (mode === 'prefectures') {
-        prefix.textContent = 'Quelle est la préfecture de';
-        numberEl.textContent = entry.question;
-        numberEl.classList.add('prefecture-question');
-        numberEl.classList.remove('dept-question');
-      } else {
-        prefix.textContent = 'Département n°';
-        numberEl.textContent = entry.question;
-        numberEl.classList.add('dept-question');
-        numberEl.classList.remove('prefecture-question');
-      }
-
-      numberEl.classList.remove('fade-in');
-      void numberEl.offsetWidth;
-      numberEl.classList.add('fade-in');
-
+      showScreen('single');
+      renderQuestion('single', entry);
       const input = document.getElementById('single-input');
-      input.value = '';
-      input.disabled = false;
-      input.focus();
       input.dataset.answer = entry.answer;
       input.dataset.display = entry.display;
       input.dataset.code = entry.code;
       document.getElementById('single-result').textContent = '';
       document.getElementById('single-result').className = 'result-text';
-      showScreen('single');
     }
 
     function handleSingleAnswer() {
@@ -1840,7 +1963,7 @@
       if (!value) return;
       const expected = input.dataset.answer;
       const display = input.dataset.display;
-      const fullDisplay = displayWithPrefecture(display, input.dataset.code);
+      const fullDisplay = currentMode === 'numeros' ? `le ${display}` : displayWithPrefecture(display, input.dataset.code);
       const result = document.getElementById('single-result');
       if (checkAnswer(value, expected)) {
         result.textContent = `Correct\u00a0! C'est bien ${fullDisplay}`;
@@ -1860,6 +1983,8 @@
     document.getElementById('btn-prefectures').addEventListener('click', () => startGame('prefectures'));
     document.getElementById('btn-single-dept').addEventListener('click', () => startSingleQuestion('departements'));
     document.getElementById('btn-single-pref').addEventListener('click', () => startSingleQuestion('prefectures'));
+    document.getElementById('btn-numeros').addEventListener('click', () => startGame('numeros'));
+    document.getElementById('btn-single-num').addEventListener('click', () => startSingleQuestion('numeros'));
     document.getElementById('btn-restart').addEventListener('click', () => showScreen('home'));
     document.getElementById('btn-another').addEventListener('click', () => startSingleQuestion(currentMode));
     document.getElementById('btn-back').addEventListener('click', () => showScreen('home'));
@@ -1893,6 +2018,13 @@
     document.getElementById('single-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleSingleAnswer();
     });
+
+    // Refocus keeps the keypad open after a wrong attempt (no-op once the input is disabled).
+    document.getElementById('btn-submit').addEventListener('click', () => {
+      handleAnswer();
+      document.getElementById('answer-input').focus();
+    });
+    document.getElementById('btn-single-submit').addEventListener('click', handleSingleAnswer);
 
     document.getElementById('btn-settings').addEventListener('click', () => showScreen('settings'));
     document.getElementById('btn-settings-back').addEventListener('click', () => {
